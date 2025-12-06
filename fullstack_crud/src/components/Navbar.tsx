@@ -1,10 +1,17 @@
 import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
-import { HomeIcon, Sprout } from "lucide-react";
+import { HomeIcon, LogIn, LogInIcon, LogOut, Sprout } from "lucide-react";
 import ModeToggle from "./ModeToggle";
+import { stackServerApp } from "../stack/server";
+import { getUserDetails } from "@/actions/user.action";
+import { UserButton } from "@stackframe/stack";
 
-function Navbar() {
+async function Navbar() {
+  const user = await stackServerApp.getUser();
+  const app = stackServerApp.urls;
+  const userProfile = await getUserDetails(user?.id);
+
   return (
     <nav className="sticky top-0 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg.background/60 z-50">
       <div className="mx-w-7xl mx-auto px-4">
@@ -36,6 +43,38 @@ function Navbar() {
             </Button>
 
             <ModeToggle />
+
+            {user ? (
+              <>
+                {/* Sign Out Button */}
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2"
+                  asChild
+                >
+                  <Link href={app.signOut}>
+                    <LogOut className="w-4 h-4" />
+                    <span className="hidden lg:inline">Logout</span>
+                  </Link>
+                </Button>
+
+                <UserButton />
+              </>
+            ) : (
+              <>
+                {/* Sign In Button */}
+                <Button
+                  variant="ghost"
+                  className="flex items-center gap-2"
+                  asChild
+                >
+                  <Link href={app.signIn}>
+                    <LogIn className="w-4 h-4" />
+                    <span className="hidden lg:inline">Log In</span>
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
